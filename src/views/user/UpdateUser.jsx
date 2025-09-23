@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogTitle } from "@mui/material";
 import Notification from "../../components/notification";
-import { url } from "../../utils/Constants";
+import mockApi from "../../utils/mockApi";
 import CameraModal from "../../components/camera";
 
 const steps = ["Personal Details", "Work Information", "Additional Details"];
@@ -116,29 +116,13 @@ const UpdateUser = ({ open, onClose, user, fetchData }) => {
     try {
       payload.image = imageData;
       payload.signature = signatureData;
-      const response = await fetch(
-        `${url}/accounts/update-user/${userData.id}/`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-
-      if (response.ok) {
-        Notification.showSuccessMessage("Success", "User Updated Successfully");
-        fetchData();
-        setUserData(initialValues);
-        handleClose();
-      } else {
-        const json = await response.json();
-        Notification.showErrorMessage("Error", json.error);
-      }
+      await mockApi.updateUser(userData.id, payload);
+      Notification.showSuccessMessage("Success", "User Updated Successfully");
+      fetchData();
+      setUserData(initialValues);
+      handleClose();
     } catch (error) {
-      Notification.showErrorMessage("Error", "Server error");
+      Notification.showErrorMessage("Error", "Failed to update user");
     }
   };
 

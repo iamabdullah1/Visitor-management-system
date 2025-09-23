@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle } from '@mui/material';
-import { url } from "../../../utils/Constants.jsx";
+import mockApi from "../../../utils/mockApi";
 import Notification from "../../../components/notification";
 
 const AddNewGuardReaderMapping = ({ open, onClose, fetchData }) => {
@@ -17,41 +17,19 @@ const AddNewGuardReaderMapping = ({ open, onClose, fetchData }) => {
 
     const getUserList = async () => {
         try {
-            const response = await fetch(`${url}/accounts/get-all-user/`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-            const json = await response.json();
-            if (response.ok) {
-                setUserList(json);
-            } else {
-                Notification.showErrorMessage("Try Again!", json.error);
-            }
+            const users = await mockApi.getUsers();
+            setUserList(users);
         } catch (err) {
-            Notification.showErrorMessage("Error", "Server error!");
+            Notification.showErrorMessage("Error", "Failed to load users!");
         }
     };
 
     const getReaderList = async () => {
         try {
-            const response = await fetch(`${url}/gadgets/register-reader/`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-            const json = await response.json();
-            if (response.ok) {
-                setReaderList(json);
-            } else {
-                Notification.showErrorMessage("Try Again!", json.error);
-            }
+            const readers = await mockApi.getReaders();
+            setReaderList(readers);
         } catch (err) {
-            Notification.showErrorMessage("Error", "Server error!");
+            Notification.showErrorMessage("Error", "Failed to load readers!");
         }
     };
 
@@ -86,25 +64,13 @@ const AddNewGuardReaderMapping = ({ open, onClose, fetchData }) => {
     const handleSubmit = async () => {
         if (!validate()) return;
         try {
-            const response = await fetch(`${url}/guard-reader-mappings/`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                body: JSON.stringify(formData),
-            });
-            if (response.ok) {
-                Notification.showSuccessMessage("Success", "Mapping added successfully");
-                setFormData(initialValues);
-                fetchData();
-                onClose();
-            } else {
-                const json = await response.json();
-                Notification.showErrorMessage("Error", json.error);
-            }
+            await mockApi.createGuardReaderMapping(formData);
+            Notification.showSuccessMessage("Success", "Mapping added successfully");
+            setFormData(initialValues);
+            fetchData();
+            onClose();
         } catch (error) {
-            Notification.showErrorMessage("Error", "Server error");
+            Notification.showErrorMessage("Error", "Failed to create mapping");
         }
     };
 

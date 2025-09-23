@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle } from '@mui/material';
-import { url } from "../../../utils/Constants.jsx";
+import mockApi from "../../../utils/mockApi";
 import Notification from "../../../components/notification";
 
 const UpdateAdam = ({ open, onClose, fetchData, adamData }) => {
@@ -42,24 +42,12 @@ const UpdateAdam = ({ open, onClose, fetchData, adamData }) => {
     const handleSubmit = async () => {
         if (!validate()) return;
         try {
-            const response = await fetch(`${url}/gadgets/update-adam/${adamData.id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                body: JSON.stringify(formData),
-            });
-            if (response.ok) {
-                Notification.showSuccessMessage("Success", "Adam updated successfully");
-                fetchData();
-                onClose();
-            } else {
-                const json = await response.json();
-                Notification.showErrorMessage("Error", json.error);
-            }
+            await mockApi.updateAdam(adamData.id, formData);
+            Notification.showSuccessMessage("Success", "Adam updated successfully");
+            fetchData();
+            onClose();
         } catch (error) {
-            Notification.showErrorMessage("Error", "Server error");
+            Notification.showErrorMessage("Error", "Failed to update adam");
         }
     };
 

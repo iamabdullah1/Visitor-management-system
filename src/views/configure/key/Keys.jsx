@@ -10,6 +10,7 @@ import Notification from "../../../components/notification/index.jsx";
 import AddNewKey from "./AddNewKey";
 import UpdateKey from "./UpdateKey";
 import Pagination from "../../../components/pagination/index.jsx";
+import mockApi from "../../../utils/mockApi";
 
 const Keys = () => {
     const [keysData, setKeysData] = useState([]);
@@ -35,22 +36,11 @@ const Keys = () => {
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch(`${url}/key/key-info`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-            const data = await response.json();
-            if (response.ok) {
-                setKeysData(data);
-                setFilteredData(data);
-            } else {
-                Notification.showErrorMessage("Try Again!", data.error);
-            }
+            const data = await mockApi.getKeys();
+            setKeysData(data);
+            setFilteredData(data);
         } catch (err) {
-            Notification.showErrorMessage("Error", "Server error!");
+            Notification.showErrorMessage("Try Again!", err.message);
         }
         setIsLoading(false);
     };
@@ -93,24 +83,11 @@ const Keys = () => {
     };
     const deleteKey = async (key) => {
         try {
-            const response = await fetch(`${url}/key/key-info/${key.id}`, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                // body: JSON.stringify("formData"),
-            });
-            if (response.ok) {
-                Notification.showSuccessMessage("Success", "Key Deleted");
-                fetchData();
-                // onClose();
-            } else {
-                const json = await response.json();
-                Notification.showErrorMessage("Error", json.error);
-            }
+            await mockApi.deleteKey(key.id);
+            Notification.showSuccessMessage("Success", "Key Deleted");
+            fetchData();
         } catch (error) {
-            Notification.showErrorMessage("Error", "Server error");
+            Notification.showErrorMessage("Error", "Failed to delete key");
         }
     };
 

@@ -5,7 +5,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import { url } from "../../../utils/Constants.jsx";
+import mockApi from "../../../utils/mockApi";
 import Notification from "../../../components/notification/index.jsx";
 import AddNewReader from "./AddNewReader";
 import UpdateReader from "./UpdateReader";
@@ -35,22 +35,11 @@ const Readers = () => {
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch(`${url}/gadgets/register-reader/`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-            const data = await response.json();
-            if (response.ok) {
-                setReadersData(data);
-                setFilteredData(data);
-            } else {
-                Notification.showErrorMessage("Try Again!", data.error);
-            }
+            const data = await mockApi.getReaders();
+            setReadersData(data);
+            setFilteredData(data);
         } catch (err) {
-            Notification.showErrorMessage("Error", "Server error!");
+            Notification.showErrorMessage("Error", "Failed to load readers data");
         }
         setIsLoading(false);
     };

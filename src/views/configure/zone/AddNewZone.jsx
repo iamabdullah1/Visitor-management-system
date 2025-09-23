@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle } from '@mui/material';
-import { url } from "../../../utils/Constants.jsx";
+import mockApi from "../../../utils/mockApi";
 import Notification from "../../../components/notification";
 
 const AddNewZone = ({ open, onClose, fetchData }) => {
@@ -39,25 +39,13 @@ const AddNewZone = ({ open, onClose, fetchData }) => {
     const handleSubmit = async () => {
         if (!validate()) return;
         try {
-            const response = await fetch(`${url}/zone/zone-info`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                body: JSON.stringify(formData),
-            });
-            if (response.ok) {
-                Notification.showSuccessMessage("Success", "Zone added successfully");
-                setFormData(initialValues);
-                fetchData();
-                onClose();
-            } else {
-                const json = await response.json();
-                Notification.showErrorMessage("Error", json.error);
-            }
+            await mockApi.createZone(formData);
+            Notification.showSuccessMessage("Success", "Zone added successfully");
+            setFormData(initialValues);
+            fetchData();
+            onClose();
         } catch (error) {
-            Notification.showErrorMessage("Error", "Server error");
+            Notification.showErrorMessage("Error", "Failed to add zone");
         }
     };
 

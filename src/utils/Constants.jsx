@@ -1,5 +1,5 @@
 
 module.exports = Object.freeze({
-  url: "http://127.0.0.1:8000",
-  // url: "http://192.168.1.50:8000",
+  // Server URLs removed - Application now runs fully frontend-only
+  // All API calls use mockApi service for demo purposes
 });

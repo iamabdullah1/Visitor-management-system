@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle } from '@mui/material';
-import { url } from "../../../utils/Constants.jsx";
+import mockApi from "../../../utils/mockApi";
 import Notification from "../../../components/notification";
 
 const UpdateReader = ({ open, onClose, fetchData, readerData }) => {
@@ -12,48 +12,26 @@ const UpdateReader = ({ open, onClose, fetchData, readerData }) => {
 
     const getAdamList = async () => {
         try {
-            const response = await fetch(`${url}/gadgets/get-adam/`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-            const json = await response.json();
-            if (response.ok) {
-                const adamDetails = json.map(adam => ({
-                    id: adam.id,
-                    name: adam.name
-                }));
-                setAdamList(adamDetails);
-            } else {
-                Notification.showErrorMessage("Try Again!", json.error);
-            }
+            const adamData = await mockApi.getAdams();
+            const adamDetails = adamData.map(adam => ({
+                id: adam.id,
+                name: adam.name
+            }));
+            setAdamList(adamDetails);
         } catch (err) {
-            Notification.showErrorMessage("Error", "Server error!");
+            Notification.showErrorMessage("Error", "Failed to load ADAM data");
         }
     };
     const getZoneList = async () => {
         try {
-            const response = await fetch(`${url}/zone/zone-info`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-            const json = await response.json();
-            if (response.ok) {
-                const zoneDetails = json.map(zone => ({
-                    id: zone.id,
-                    zoneName: zone.zone_name
-                }));
-                setZoneList(zoneDetails);
-            } else {
-                Notification.showErrorMessage("Try Again!", json.error);
-            }
+            const zoneData = await mockApi.getZones();
+            const zoneDetails = zoneData.map(zone => ({
+                id: zone.id,
+                zoneName: zone.zone_name
+            }));
+            setZoneList(zoneDetails);
         } catch (err) {
-            Notification.showErrorMessage("Error", "Server error!");
+            Notification.showErrorMessage("Error", "Failed to load zone data");
         }
     }
 
@@ -105,24 +83,12 @@ const UpdateReader = ({ open, onClose, fetchData, readerData }) => {
     const handleSubmit = async () => {
         if (!validate()) return;
         try {
-            const response = await fetch(`${url}/gadgets/update-reader/${readerData.id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                body: JSON.stringify(formData),
-            });
-            if (response.ok) {
-                Notification.showSuccessMessage("Success", "Reader updated successfully");
-                fetchData();
-                onClose();
-            } else {
-                const json = await response.json();
-                Notification.showErrorMessage("Error", json.error);
-            }
+            await mockApi.updateReader(readerData.id, formData);
+            Notification.showSuccessMessage("Success", "Reader updated successfully");
+            fetchData();
+            onClose();
         } catch (error) {
-            Notification.showErrorMessage("Error", "Server error");
+            Notification.showErrorMessage("Error", "Failed to update reader");
         }
     };
 

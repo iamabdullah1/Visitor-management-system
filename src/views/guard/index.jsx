@@ -113,47 +113,39 @@ const Guard = () => {
   
 
 
-  // const WS_URL = "ws://192.168.1.53:8000/ws/data/" // For running in remote server
-  const WS_URL = "ws://127.0.0.1:8000/ws/data/" // For running in local server
+  // const WS_URL = "ws://127.0.0.1:8000/ws/data/" // For running in local server
   const [profiles, setProfiles] = useState(placeholderData);
 
-  const token = localStorage.getItem("token");
-  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
-    WS_URL,
-    {
-      protocols: [token],
-      share: false,
-      shouldReconnect: () => false,
-      onOpen: () => console.log('opened'),
-    },
-  )
+  // Mock WebSocket for demo
+  // const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
+  //   WS_URL,
+  //   {
+  //     protocols: [token],
+  //     share: false,
+  //     shouldReconnect: () => false,
+  //     onOpen: () => console.log('opened'),
+  //   },
+  // )
   // Run when the connection state (readyState) changes
-  useEffect(() => {
-    console.log("Connection state changed", readyState);
-
-  }, [readyState])
+  // useEffect(() => {
+  //   console.log("Connection state changed", readyState);
+  // }, [readyState])
 
   // Run when a new WebSocket message is received (lastJsonMessage)
-  useEffect(() => {
-    console.log(`Got a new message: ${lastJsonMessage}`)
-    console.log(lastJsonMessage);
-    if (lastJsonMessage && lastJsonMessage.response.success) {
-      setProfiles([lastJsonMessage.response.success, ...profiles.slice(0, -1)]);
-    } else if (lastJsonMessage && lastJsonMessage.response.error) {
-      Notification.showErrorMessage("Error", lastJsonMessage.response.error, 5000);
-    }
+  // useEffect(() => {
+  //   console.log(`Got a new message: ${lastJsonMessage}`)
+  //   console.log(lastJsonMessage);
+  //   if (lastJsonMessage && lastJsonMessage.response.success) {
+  //     setProfiles([lastJsonMessage.response.success, ...profiles.slice(0, -1)]);
+  //   } else if (lastJsonMessage && lastJsonMessage.response.error) {
+  //     Notification.showErrorMessage("Error", lastJsonMessage.response.error, 5000);
+  //   }
 
-    console.log(":::progilesss", profiles);
-    console.log("Shah Print--> ", profiles.slice(0,2)[1]);
-  }, [lastJsonMessage])
+  //   console.log(":::progilesss", profiles);
+  //   console.log("Shah Print--> ", profiles.slice(0,2)[1]);
+  // }, [lastJsonMessage])
 
-  const connectionStatus = {
-    [ReadyState.CONNECTING]: 'Connecting',
-    [ReadyState.OPEN]: 'Open',
-    [ReadyState.CLOSING]: 'Closing',
-    [ReadyState.CLOSED]: 'Closed',
-    [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
-  }[readyState];
+  const connectionStatus = 'Mock';
 
   
   return (

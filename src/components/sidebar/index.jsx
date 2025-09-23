@@ -39,13 +39,21 @@ const SideBar = () => {
 
   useEffect(() => {
     const storedRole = localStorage.getItem("user_type");
-    setRole(storedRole);
+    // Map the stored role to display names
+    if (storedRole === "security") {
+      setRole("Guard");
+    } else if (storedRole === "admin") {
+      setRole("Admin");
+    } else {
+      setRole("Receptionist"); // Default for 'user' type
+    }
   }, [setUser]);
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
 
+  // Hide sidebar for security guards
   if (role === "Guard") {
     return null;
   }

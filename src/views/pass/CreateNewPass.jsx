@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import Notification from '../../components/notification';
-import { url } from '../../utils/Constants';
+import mockApi from '../../utils/mockApi';
 import Select from 'react-select';
 import ViewPass from "./ViewPass";
 import MultipleSelectDropdown from './MultipleSelectDropdown';
@@ -42,42 +42,19 @@ const CreateNewPass = ({ open, onClose, visitor }) => {
 
     const fetchKeyList = async () => {
         try {
-            const response = await fetch(`${url}/key/key-info`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
-            const json = await response.json();
-            if (response.ok) {
-                // const unassignedKeys = json.filter(key => !key.is_assigned);
-                setKeyList(json);
-            } else {
-                Notification.showErrorMessage('Try Again!', json.error);
-            }
+            const keys = await mockApi.getKeys();
+            setKeyList(keys);
         } catch (err) {
-            Notification.showErrorMessage('Error', 'Server error!');
+            Notification.showErrorMessage('Error', 'Failed to load keys!');
         }
     };
 
     const fetchZoneList = async () => {
         try {
-            const response = await fetch(`${url}/zone/zone-info`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
-            const json = await response.json();
-            if (response.ok) {
-                setZoneList(json.map(zone => ({ id: zone.id, name: zone.zone_name })));
-            } else {
-                Notification.showErrorMessage('Try Again!', json.error);
-            }
+            const zones = await mockApi.getZones();
+            setZoneList(zones.map(zone => ({ id: zone.id, name: zone.zone_name })));
         } catch (err) {
-            Notification.showErrorMessage('Error', 'Server error!');
+            Notification.showErrorMessage('Error', 'Failed to load zones!');
         }
     };
 
@@ -128,72 +105,38 @@ const CreateNewPass = ({ open, onClose, visitor }) => {
     const handleSubmit = async () => {
         if (!validate()) return;
         try {
-            const response = await fetch(`${url}/passes/visitor-pass-info`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-                body: JSON.stringify(passData),
-            });
-
-            const json = await response.json();
-
-            if (response.ok) {
-                Notification.showSuccessMessage('Success', 'Pass created successfully');
-                setPassCreated(json);
-                setShowViewPass(true);
-                setPassData(initialValues);
-                handleClose();
-            } else {
-                if (response.status === 409);
-                {
-                    const response = await fetch(`${url}/passes/view-last-registered-visitor/${passData?.key}`, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Authorization: `Bearer ${localStorage.getItem('token')}`,
-                        },
-                    });
-                    const json = await response.json();
-                    if (response.ok) {
-                        setPreviousVisitor(json);
-                        setIsConflict(true);
-                    } else {
-                        Notification.showErrorMessage('Try Again!', json.error);
-                    }
-                }
+            // Check for conflicts first
+            const conflictCheck = await mockApi.checkPassConflict(passData.key);
+            if (conflictCheck.conflict) {
+                setPreviousVisitor(conflictCheck.previousVisitor);
+                setIsConflict(true);
+                return;
             }
+
+            // Create the pass
+            const newPass = await mockApi.createPass(passData);
+            Notification.showSuccessMessage('Success', 'Pass created successfully');
+            setPassCreated(newPass);
+            setShowViewPass(true);
+            setPassData(initialValues);
+            handleClose();
         } catch (error) {
-            Notification.showErrorMessage('Errors', 'Server error');
+            Notification.showErrorMessage('Error', 'Failed to create pass');
         }
     };
 
     const handleOverWriteSubmit = async () => {
         if (!validate()) return;
         try {
-            const response = await fetch(`${url}/passes/visitor-pass-info/overwrite`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-                body: JSON.stringify(passData),
-            });
-            const json = await response.json();
-
-            if (response.ok) {
-                Notification.showSuccessMessage('Success', 'Pass created successfully');
-                setPassCreated(json);
-                setShowViewPass(true);
-                setPassData(initialValues);
-                handleClose();
-                setIsConflict(false);
-            } else {
-                Notification.showErrorMessage('Error', 'Unable To OverWrite Pass');
-            }
+            const newPass = await mockApi.createPass(passData, true); // overwrite mode
+            Notification.showSuccessMessage('Success', 'Pass created successfully');
+            setPassCreated(newPass);
+            setShowViewPass(true);
+            setPassData(initialValues);
+            handleClose();
+            setIsConflict(false);
         } catch (error) {
-            Notification.showErrorMessage('Error', 'Server error');
+            Notification.showErrorMessage('Error', 'Failed to create pass');
         }
     };
 

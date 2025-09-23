@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle } from '@mui/material';
-import { url } from "../../../utils/Constants.jsx";
+import mockApi from "../../../utils/mockApi";
 import Notification from "../../../components/notification";
 
 const AddNewReader = ({ open, onClose, fetchData }) => {
@@ -21,49 +21,27 @@ const AddNewReader = ({ open, onClose, fetchData }) => {
 
     const getAdamList = async () => {
         try {
-            const response = await fetch(`${url}/gadgets/get-adam/`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-            const json = await response.json();
-            if (response.ok) {
-                const adamDetails = json.map(adam => ({
-                    id: adam.id,
-                    ip: adam.ip,
-                    name: adam.name
-                }));
-                setAdamList(adamDetails);
-            } else {
-                Notification.showErrorMessage("Try Again!", json.error);
-            }
+            const adamData = await mockApi.getAdams();
+            const adamDetails = adamData.map(adam => ({
+                id: adam.id,
+                ip: adam.ip,
+                name: adam.name
+            }));
+            setAdamList(adamDetails);
         } catch (err) {
-            Notification.showErrorMessage("Error", "Server error!");
+            Notification.showErrorMessage("Error", "Failed to load ADAM data");
         }
     };
     const getZoneList = async () => {
         try {
-            const response = await fetch(`${url}/zone/zone-info`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-            const json = await response.json();
-            if (response.ok) {
-                const zoneDetails = json.map(zone => ({
-                    id: zone.id,
-                    zoneName: zone.zone_name
-                }));
-                setZoneList(zoneDetails);
-            } else {
-                Notification.showErrorMessage("Try Again!", json.error);
-            }
+            const zoneData = await mockApi.getZones();
+            const zoneDetails = zoneData.map(zone => ({
+                id: zone.id,
+                zoneName: zone.zone_name
+            }));
+            setZoneList(zoneDetails);
         } catch (err) {
-            Notification.showErrorMessage("Error", "Server error!");
+            Notification.showErrorMessage("Error", "Failed to load zone data");
         }
     }
 
@@ -110,26 +88,13 @@ const AddNewReader = ({ open, onClose, fetchData }) => {
     const handleSubmit = async () => {
         if (!validate()) return;
         try {
-            const response = await fetch(`${url}/gadgets/register-reader/`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                body: JSON.stringify(formData),
-            });
-            if (response.ok) {
-                Notification.showSuccessMessage("Success", "Reader added successfully");
-                setFormData(initialValues);
-                fetchData();
-                onClose();
-            } else {
-                const json = await response.json();
-                console.log(json);
-                Notification.showErrorMessage("Error", json.error);
-            }
+            await mockApi.createReader(formData);
+            Notification.showSuccessMessage("Success", "Reader added successfully");
+            setFormData(initialValues);
+            fetchData();
+            onClose();
         } catch (error) {
-            Notification.showErrorMessage("Error", "Server error");
+            Notification.showErrorMessage("Error", "Failed to add reader");
         }
     };
 

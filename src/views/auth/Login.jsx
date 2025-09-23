@@ -7,6 +7,7 @@ import modlogo from "../../assets/images/web-logo.png";
 import footerwave from "../../assets/images/footer-wave.png";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import Loading from "../../components/loading";
+import mockApi from "../../utils/mockApi";
 
 const Login = () => {
   let navigate = useNavigate();
@@ -25,41 +26,30 @@ const Login = () => {
     event.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch(`${url}/accounts/login-user/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: username,
-          password: password,
-        }),
+      const json = await mockApi.login({
+        username: username,
+        password: password,
       });
-      const json = await response.json();
 
-      if (response.ok) {
-        Notification.showSuccessMessage("Welcome", "Logged in Successfully");
+      Notification.showSuccessMessage("Welcome", "Logged in Successfully");
 
-        localStorage.setItem("user_id", json.id);
-        localStorage.setItem("user_name", json.username);
-        localStorage.setItem("user_type", json.user_type);
-        localStorage.setItem("image", json.image);
-        localStorage.setItem("token", json.token.access);
-        localStorage.setItem("refresh_token", json.token.refresh);
-        localStorage.setItem("userInfo", JSON.stringify(json));
+      localStorage.setItem("user_id", json.id);
+      localStorage.setItem("user_name", json.username);
+      localStorage.setItem("user_type", json.user_type);
+      localStorage.setItem("image", json.image);
+      localStorage.setItem("token", json.token.access);
+      localStorage.setItem("refresh_token", json.token.refresh);
+      localStorage.setItem("userInfo", JSON.stringify(json));
 
-        setUser(json);
-        setUsername("");
-        setPassword("");
-        navigate("/");
-      } else {
-        setIsLoading(false);
-        Notification.showErrorMessage("Login Failed", json.error || "Invalid credentials");
-      }
+      setUser(json);
+      setUsername("");
+      setPassword("");
+      navigate("/");
     } catch (err) {
       setIsLoading(false);
-      Notification.showErrorMessage("Error", "Server error!");
+      Notification.showErrorMessage("Login Failed", err.message || "Invalid credentials");
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -76,17 +66,12 @@ const Login = () => {
     <div className="flex items-center justify-center h-screen bg-customGreen w-full">
       {/* <form className="p-8 min-w-[440px] border border-gray-300 rounded-lg shadow-md" onSubmit={handleSubmit} > */}
       <form className="p-8 min-w-[440px] rounded-lg" style={{ 'border': "1px solid #567763", "boxShadow": "rgba(0, 0, 0, 0.24) 0px 3px 8px" }} onSubmit={handleSubmit} >
-        <div className="flex justify-center mb-1">
-          <img src={modlogo} alt="Ministry of Defence" className="h-26" />
-        </div>
+       
         <div className="flex justify-center mb-1 text-white text-lg md:text-xl">
           {/* Ministry Of Defence, India */}
           Visitor Management System
         </div>
-        <div className="flex justify-center mb-4 text-white text-lg md:text-xl">
-          {/* रक्षा मंत्रालय, भारत */}
-          विज़िटर प्रबंधन प्रणाली
-        </div>
+        
         <div className="mb-4">
           <label htmlFor="username" className="sr-only">Username</label>
           <input

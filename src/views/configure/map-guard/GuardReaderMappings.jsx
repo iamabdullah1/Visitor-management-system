@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
-import { url } from "../../../utils/Constants.jsx";
 import AddIcon from "@mui/icons-material/Add";
+import mockApi from "../../../utils/mockApi";
 import Notification from "../../../components/notification/index.jsx";
 import Pagination from "../../../components/pagination/index.jsx";
 import AddNewGuardReaderMapping from "./AddNewGuardReaderMapping";
@@ -32,22 +32,11 @@ const GuardReaderMappings = () => {
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch(`${url}/guard-reader-mappings/`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-            const data = await response.json();
-            if (response.ok) {
-                setMappingsData(data);
-                setFilteredData(data);
-            } else {
-                Notification.showErrorMessage("Try Again!", data.error);
-            }
+            const data = await mockApi.getGuardReaderMappings();
+            setMappingsData(data);
+            setFilteredData(data);
         } catch (err) {
-            Notification.showErrorMessage("Error", "Server error!");
+            Notification.showErrorMessage("Error", "Failed to load mappings!");
         }
         setIsLoading(false);
     };

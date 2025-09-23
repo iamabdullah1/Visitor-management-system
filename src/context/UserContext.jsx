@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Notification from "../components/notification";
-import { url } from "../utils/Constants";
+import mockApi from "../utils/mockApi";
 
 export const UserContext = createContext();
 
@@ -16,30 +16,52 @@ export function UserContextProvider({ children }) {
   useEffect(() => {
     const verifyToken = async () => {
       try {
-        const response = await fetch(`${url}/accounts/validate-token/`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({
-            token: localStorage.getItem("token"),
-          }),
-        });
-        const json = await response.json();
+        // Mock token validation - check if token exists in localStorage
+        const token = localStorage.getItem("token");
+        const userInfo = localStorage.getItem("userInfo");
 
-        if (!response.ok) {
+        if (token && userInfo) {
+          const userData = JSON.parse(userInfo);
+          setUser(userData);
+          setIsAuthenticated(true);
+          setUsername(userData.username);
+          setLoggedUser(userData);
+        } else {
+          // No valid session found
           Notification.showErrorMessage("Sorry", "Session has Expired!");
           localStorage.clear();
           setUser();
           navigate("/login");
         }
       } catch (err) {
-        Notification.showErrorMessage("Error", "Server error!");
+        Notification.showErrorMessage("Error", "Session validation failed!");
+        localStorage.clear();
+        setUser();
+        navigate("/login");
       }
     };
     verifyToken();
   }, []);
+
+  const logout = async () => {
+    try {
+      // Clear all authentication data
+      localStorage.clear();
+      setUser(null);
+      setIsAuthenticated(false);
+      setUsername("");
+      setIslogin(false);
+      setLoggedUser(null);
+
+      // Navigate to login page
+      navigate("/login");
+
+      return { success: true };
+    } catch (err) {
+      console.error("Logout error:", err);
+      return { success: false, error: err.message };
+    }
+  };
 
   return (
     <UserContext.Provider value={{
@@ -51,7 +73,8 @@ export function UserContextProvider({ children }) {
       islogin,
       setIslogin,
       loggedUser,
-      setLoggedUser
+      setLoggedUser,
+      logout
     }}>
       {children}
     </UserContext.Provider>

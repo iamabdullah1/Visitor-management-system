@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogTitle } from '@mui/material';
 import Notification from "../../components/notification";
-import { url } from "../../utils/Constants";
+import mockApi from "../../utils/mockApi";
 
 const ResetPasswordUser = ({ open, onClose, user }) => {
   const navigate = useNavigate();
@@ -43,24 +43,11 @@ const ResetPasswordUser = ({ open, onClose, user }) => {
     if (!validate()) return;
 
     try {
-      const response = await fetch(`${url}/accounts/reset-password-by-admin/${user.id}/`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ password: passwords.confirmPassword })
-      });
-
-      if (response.ok) {
-        Notification.showSuccessMessage('Success', 'User Password Updated Successfully');
-        navigate('/user');
-      } else {
-        const json = await response.json();
-        Notification.showErrorMessage('Try Again!', json.error);
-      }
+      await mockApi.resetUserPassword(user.id, passwords.confirmPassword);
+      Notification.showSuccessMessage('Success', 'User Password Updated Successfully');
+      navigate('/user');
     } catch (error) {
-      Notification.showErrorMessage('Error', 'Server error!');
+      Notification.showErrorMessage('Error', 'Failed to reset password');
     } finally {
       onClose();
     }

@@ -4,6 +4,7 @@ import { url } from "../../utils/Constants";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Notification from "../../components/notification/index.jsx";
 import "chart.js/auto";
+import mockApi from "../../utils/mockApi";
 
 const Dashboard = () => {
   const [passTimeLeftData, setPassTimeLeftData] = useState([]);
@@ -13,21 +14,10 @@ const Dashboard = () => {
 
   const getPassTimeLeft = async () => {
     try {
-      const response = await fetch(`${url}/dashboard/pass-time-left/`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      const json = await response.json();
-      if (response.ok) {
-        setPassTimeLeftData(json);
-      } else {
-        Notification.showErrorMessage("Try Again!", json.error);
-      }
+      const json = await mockApi.getPassTimeLeft();
+      setPassTimeLeftData(json);
     } catch (err) {
-      Notification.showErrorMessage("Error", "Server error!");
+      Notification.showErrorMessage("Error", err.message || "Server error!");
     }
   };
 
@@ -43,21 +33,10 @@ const Dashboard = () => {
 
   const getTodayVisitorVisitDashboard = async () => {
     try {
-      const response = await fetch(`${url}/dashboard/today-visitor-visit/`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      const json = await response.json();
-      if (response.ok) {
-        setTodayVisitorData(json);
-      } else {
-        Notification.showErrorMessage("Try Again!", json.error);
-      }
+      const json = await mockApi.getTodayVisitorVisit();
+      setTodayVisitorData(json);
     } catch (err) {
-      Notification.showErrorMessage("Error", "Server error!");
+      Notification.showErrorMessage("Error", err.message || "Server error!");
     }
   };
 
@@ -123,21 +102,10 @@ const Dashboard = () => {
 
   const getWeeklyVisitorVisit = async () => {
     try {
-      const response = await fetch(`${url}/dashboard/weekly-visitor-visit/`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      const json = await response.json();
-      if (response.ok) {
-        setWeeklyVisitorData(json);
-      } else {
-        Notification.showErrorMessage("Try Again!", json.error);
-      }
+      const json = await mockApi.getWeeklyVisitorVisit();
+      setWeeklyVisitorData(json);
     } catch (err) {
-      Notification.showErrorMessage("Error", "Server error!");
+      Notification.showErrorMessage("Error", err.message || "Server error!");
     }
   };
 
@@ -154,21 +122,10 @@ const Dashboard = () => {
 
   const getVisitorInZones = async () => {
     try {
-      const response = await fetch(`${url}/dashboard/visitor-in-zone/`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      const json = await response.json();
-      if (response.ok) {
-        setVisitorInZonesData(json);
-      } else {
-        Notification.showErrorMessage("Try Again!", json.error);
-      }
+      const json = await mockApi.getVisitorInZones();
+      setVisitorInZonesData(json);
     } catch (err) {
-      Notification.showErrorMessage("Error", "Server error!");
+      Notification.showErrorMessage("Error", err.message || "Server error!");
     }
   };
 
@@ -303,7 +260,7 @@ const Dashboard = () => {
                         </div>
                       </td>
                       <td className="px-4 py-4">{visitor.phone}</td>
-                      <td className="px-6 py-4">{visitor.gov_id_type.replace('_', ' ')}</td>
+                      <td className="px-6 py-4">{visitor.gov_id_type ? visitor.gov_id_type.replace('_', ' ') : 'N/A'}</td>
                       <td className="px-6 py-4">{visitor.gov_id_no}</td>
                     </tr>
                   );

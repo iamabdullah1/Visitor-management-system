@@ -5,6 +5,7 @@ import Notification from "../../components/notification/index.jsx";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Box } from "@mui/material";
 import ViewPass from "./ViewPass";
+import mockApi from "../../utils/mockApi";
 
 const Passes = () => {
     const [passesData, setPassesData] = useState([]);
@@ -17,21 +18,10 @@ const Passes = () => {
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch(`${url}/passes/visitor-pass-info`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-            const json = await response.json();
-            if (response.ok) {
-                setPassesData(json);
-            } else {
-                Notification.showErrorMessage("Try Again!", json.error);
-            }
+            const json = await mockApi.getPasses();
+            setPassesData(json);
         } catch (err) {
-            Notification.showErrorMessage("Error", "Server error!");
+            Notification.showErrorMessage("Error", err.message || "Server error!");
         }
         setIsLoading(false);
     };

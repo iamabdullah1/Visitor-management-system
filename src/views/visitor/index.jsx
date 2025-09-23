@@ -8,6 +8,7 @@ import VisitorProfile from './VisitorProfile';
 import UpdateVisitor from './UpdateVisitor';
 import AddNewVisitor from './AddNewVisitor';
 import CreateNewPass from '../pass/CreateNewPass';
+import mockApi from "../../utils/mockApi";
 
 const Visitor = () => {
   const [selectedVisitor, setSelectedVisitor] = useState(null);
@@ -54,24 +55,12 @@ const Visitor = () => {
 
   const fetchData = async () => {
     setIsLoading(true);
-    const queryString = new URLSearchParams(searchParams).toString();
     try {
-      const response = await fetch(`${url}/visitor/visitor-info?${queryString}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      const json = await response.json();
-      if (response.ok) {
-        setVisitorData(json?.results);
-        setTotalVisitors(json?.count);
-      } else {
-        Notification.showErrorMessage("Try Again!", json.error);
-      }
+      const json = await mockApi.getVisitors(searchParams);
+      setVisitorData(json);
+      setTotalVisitors(json.length);
     } catch (err) {
-      Notification.showErrorMessage("Error", "Server error!");
+      Notification.showErrorMessage("Error", err.message || "Server error!");
     }
     setIsLoading(false);
   };

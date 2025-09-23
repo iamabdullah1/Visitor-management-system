@@ -9,6 +9,7 @@ import UserProfile from './UserProfile';
 import UpdateUser from './UpdateUser';
 import AddNewUser from './AddNewUser';
 import ResetPasswordUser from './ResetPasswordUser';
+import mockApi from "../../utils/mockApi";
 
 const User = () => {
   const [selectedUser, setSelectedUser] = useState(null);
@@ -33,21 +34,10 @@ const User = () => {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${url}/accounts/get-all-user/`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      const json = await response.json();
-      if (response.ok) {
-        setUserData(json.results);
-      } else {
-        Notification.showErrorMessage("Try Again!", json.error);
-      }
+      const json = await mockApi.getAllUsers();
+      setUserData(json);
     } catch (err) {
-      Notification.showErrorMessage("Error", "Server error!");
+      Notification.showErrorMessage("Error", err.message || "Server error!");
     }
     setIsLoading(false);
   };

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogTitle } from '@mui/material';
 import Notification from "../../components/notification";
-import { url } from "../../utils/Constants";
+import mockApi from "../../utils/mockApi";
 
 const ResetPassword = ({ open, onClose }) => {
   const navigate = useNavigate();
@@ -43,23 +43,17 @@ const ResetPassword = ({ open, onClose }) => {
     if (!validate()) return;
 
     try {
-      const response = await fetch(`${url}/accounts/reset-password-by-user/`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ password: passwords.confirmPassword })
-      });
+      // Mock password reset - always succeeds in frontend-only mode
+      await mockApi.resetUserPassword(localStorage.getItem('user_id'));
 
-      if (response.ok) {
-        Notification.showSuccessMessage('Success', 'Password Updated Successfully');       
-      } else {
-        const json = await response.json();
-        Notification.showErrorMessage('Try Again!', json.error);
-      }
+      Notification.showSuccessMessage('Success', 'Password Updated Successfully');
+
+      // Reset form
+      setPasswords(initialValues);
+      setErrors({});
+      setProgress(0);
     } catch (error) {
-      Notification.showErrorMessage('Error', 'Server error!');
+      Notification.showErrorMessage('Error', 'Password reset failed!');
     } finally {
       onClose();
     }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogTitle } from '@mui/material';
 import Notification from "../../components/notification";
-import { url } from "../../utils/Constants";
+import mockApi from "../../utils/mockApi";
 import CameraModal from "../../components/camera";
 import SignatureCapture from "../../components/SignatureCapture/SignatureCapture";
 
@@ -103,31 +103,16 @@ const AddNewUser = ({ open, onClose, fetchData }) => {
     try {
       userData.image = imageData;
       userData.signature = signatureData;
-      const response = await fetch(`${url}/accounts/create-users/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(userData),
-      });
 
-      if (response.ok) {
-        Notification.showSuccessMessage("Success", "User Added Successfully");
-        fetchData();
-        setUserData(initialValues);
-        handleClose();
-      } else {
-        const json = await response.json();
-        let message = ""
-        Object.values(json).forEach(value => {
-          console.log(value); // prints value
-          message = message + value[0] + "\n"
-        });
-        Notification.showErrorMessage("Error", message);
-      }
+      // Mock user creation - always succeeds in frontend-only mode
+      await mockApi.createUser(userData);
+
+      Notification.showSuccessMessage("Success", "User Added Successfully");
+      fetchData();
+      setUserData(initialValues);
+      handleClose();
     } catch (error) {
-      Notification.showErrorMessage("Error", "Server error");
+      Notification.showErrorMessage("Error", "User creation failed");
     }
   };
 

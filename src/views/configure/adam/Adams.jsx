@@ -5,7 +5,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import { url } from "../../../utils/Constants.jsx";
+import mockApi from "../../../utils/mockApi";
 import Notification from "../../../components/notification/index.jsx";
 import AddNewAdam from "./AddNewAdam";
 import UpdateAdam from "./UpdateAdam";
@@ -35,22 +35,11 @@ const Adams = () => {
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch(`${url}/gadgets/get-adam/`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-            const data = await response.json();
-            if (response.ok) {
-                setAdamsData(data);
-                setFilteredData(data);
-            } else {
-                Notification.showErrorMessage("Try Again!", data.error);
-            }
+            const data = await mockApi.getAdams();
+            setAdamsData(data);
+            setFilteredData(data);
         } catch (err) {
-            Notification.showErrorMessage("Error", "Server error!");
+            Notification.showErrorMessage("Error", "Failed to load adam data!");
         }
         setIsLoading(false);
     };
@@ -94,24 +83,11 @@ const Adams = () => {
     
     const deleteAdam = async (adam) => {
         try {
-            const response = await fetch(`${url}/gadgets/update-adam/${adam.id}`, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                // body: JSON.stringify("formData"),
-            });
-            if (response.ok) {
-                Notification.showSuccessMessage("Success", "Adam Deleted");
-                fetchData();
-                // onClose();
-            } else {
-                const json = await response.json();
-                Notification.showErrorMessage("Error", json.error);
-            }
+            await mockApi.deleteAdam(adam.id);
+            Notification.showSuccessMessage("Success", "Adam Deleted");
+            fetchData();
         } catch (error) {
-            Notification.showErrorMessage("Error", "Server error");
+            Notification.showErrorMessage("Error", "Failed to delete adam");
         }
     };
     const indexOfLastItem = currentPage * itemsPerPage;

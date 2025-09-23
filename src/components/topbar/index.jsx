@@ -13,27 +13,21 @@ const Topbar = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch(`${url}/accounts/logout-user/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          refresh: localStorage.getItem("refresh_token"),
-        }),
-      });
-      if (response.ok) {
-        localStorage.clear();
-        setUser();
-        history("/login");
-        Notification.showSuccessMessage(
-          "Logout Successfully!",
-          "You have been logged out successfully."
-        );
-      }
+      // Clear all authentication data
+      localStorage.clear();
+      setUser(null);
+      setIslogin(false);
+
+      // Navigate to login page
+      history("/login");
+
+      // Show success notification
+      Notification.showSuccessMessage(
+        "Logout Successfully!",
+        "You have been logged out successfully."
+      );
     } catch (err) {
-      Notification.showErrorMessage("Error", "Server error!");
+      Notification.showErrorMessage("Error", "Logout failed!");
     }
   };
 

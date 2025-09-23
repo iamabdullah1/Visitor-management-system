@@ -4,6 +4,7 @@ import Notification from "../../components/notification";
 import { url } from "../../utils/Constants";
 import CameraModal from "../../components/camera";
 import SignatureCapture from "../../components/SignatureCapture/SignatureCapture";
+import mockApi from "../../utils/mockApi";
 
 const steps = ['Personal Details', 'Contact Information', 'Identification', 'Documents'];
 
@@ -93,27 +94,13 @@ const AddNewVisitor = ({ open, onClose, fetchData, onActionClick }) => {
     try {
       visitorData.image = imageData;
       visitorData.signature = signatureData;
-      const response = await fetch(`${url}/visitor/visitor-info`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(visitorData),
-      });
-      const json = await response.json();
-      if (response.ok) {
-        Notification.showSuccessMessage("Success", "Visitor Added Successfully");
-        onActionClick('view', json);
-        // setVisitorCreated(json);
-        handleClose();
-        fetchData();
-      } else {
-        const json = await response.json();
-        Notification.showErrorMessage("Error", json.error);
-      }
+      const json = await mockApi.createVisitor(visitorData);
+      Notification.showSuccessMessage("Success", "Visitor Added Successfully");
+      onActionClick('view', json);
+      handleClose();
+      fetchData();
     } catch (error) {
-      Notification.showErrorMessage("Error", "Server error");
+      Notification.showErrorMessage("Error", error.message);
     }
   };
 
