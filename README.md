@@ -398,7 +398,7 @@ We welcome contributions to the Visitor Management System! Please follow these g
 **Email**: iamabdullahakram1@gmail.com
 **LinkedIn**: https://www.linkedin.com/in/abdullah-akram-a8b213318/
 **GitHub**: https://github.com/iamabdullah1
-**Portfolio**: abdullahakram.me
+**Portfolio**: https://abdullahakram.me
 
 ---
 
