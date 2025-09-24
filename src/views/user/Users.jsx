@@ -20,8 +20,8 @@ const Users = ({ users, isLoading, onActionClick }) => {
 
   useEffect(() => {
     const filtered = users?.filter(user =>
-      user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      `${user.first_name} ${user.last_name}`.toLowerCase().includes(searchTerm.toLowerCase())
+      user.user_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredUsers(filtered);
   }, [searchTerm, users]);
@@ -136,26 +136,26 @@ const Users = ({ users, isLoading, onActionClick }) => {
                           <img src={`data:image/jpeg;base64,${user.image}`} alt="User" />
                         ) : (
                           <div className="h-full w-full flex items-center justify-center text-white bg-customGreen">
-                            {user.username ? user.username.charAt(0).toUpperCase() : 'N'}
+                            {user.user_name ? user.user_name.charAt(0).toUpperCase() : 'N'}
                           </div>
                         )}
                       </div>
                     </div>
                   </td>
                   <td className="py-4 px-6 border-b border-grey-light">
-                    {user.username}
+                    {user.user_name}
                   </td>
                   <td className="py-4 px-6 border-b border-grey-light">
-                    {user.first_name} {user.last_name}
+                    {user.firstName} {user.lastName}
                   </td>
                   <td className="py-4 px-6 border-b border-grey-light">
                     {user.user_type}
                   </td>
                   <td className="py-4 px-6 border-b border-grey-light">
-                    {user.employee_code}
+                    {user.employeeCode}
                   </td>
                   <td className="py-4 px-6 border-b border-grey-light">
-                    {user.work_location}
+                    {user.workLocation}
                   </td>
                   <td className="py-4 px-6 border-b border-grey-light">
                     {user.department}

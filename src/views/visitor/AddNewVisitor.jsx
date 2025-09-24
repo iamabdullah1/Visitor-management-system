@@ -282,10 +282,6 @@ const AddNewVisitor = ({ open, onClose, fetchData, onActionClick }) => {
                   <span className="text-gray-500">No signature captured</span>
                 )}
               </div>
-              {/* <button className="flex items-center bg-customGreen hover:bg-green-700 text-white py-1 px-4 rounded-3xl" onClick={() => setSignatureModalOpen(true)}>
-                Capture Signature
-              </button>
-              <CameraModal open={signatureModalOpen} onClose={() => setSignatureModalOpen(false)} onCaptured={handleSignatureCapture} /> */}
               <SignatureCapture onCapture={handleSignatureCapture} />
             </div>
           </div>
