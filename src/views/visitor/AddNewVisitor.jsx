@@ -3,7 +3,6 @@ import { Dialog, DialogTitle } from '@mui/material';
 import Notification from "../../components/notification";
 import { url } from "../../utils/Constants";
 import CameraModal from "../../components/camera";
-import SignatureCapture from "../../components/SignatureCapture/SignatureCapture";
 import mockApi from "../../utils/mockApi";
 
 const steps = ['Personal Details', 'Contact Information', 'Identification', 'Documents'];
@@ -19,7 +18,6 @@ const AddNewVisitor = ({ open, onClose, fetchData, onActionClick }) => {
     visitor_type: '',
     gov_id_type: '',
     gov_id_no: '',
-    signature: '',
     image: ''
   }
 
@@ -27,9 +25,7 @@ const AddNewVisitor = ({ open, onClose, fetchData, onActionClick }) => {
   const [visitorData, setVisitorData] = useState(initialValues);
   const [errors, setErrors] = useState({});
   const [imageModalOpen, setImageModalOpen] = useState(false);
-  const [signatureModalOpen, setSignatureModalOpen] = useState(false);
   const [imageData, setImageData] = useState('');
-  const [signatureData, setSignatureData] = useState('');
 
   const validate = () => {
     const newErrors = {};
@@ -93,7 +89,6 @@ const AddNewVisitor = ({ open, onClose, fetchData, onActionClick }) => {
     if (!validate()) return;
     try {
       visitorData.image = imageData;
-      visitorData.signature = signatureData;
       const json = await mockApi.createVisitor(visitorData);
       Notification.showSuccessMessage("Success", "Visitor Added Successfully");
       onActionClick('view', json);
@@ -109,17 +104,13 @@ const AddNewVisitor = ({ open, onClose, fetchData, onActionClick }) => {
     setImageModalOpen(false);
   };
 
-  const handleSignatureCapture = (base64Image) => {
-    setSignatureData(base64Image);
-    setSignatureModalOpen(false);
-  };
+
 
   const handleClose = () => {
     onClose();
     setActiveStep(0);
     setErrors({});
     setImageData("");
-    setSignatureData("");
     setVisitorData(initialValues);
   }
 
@@ -257,7 +248,7 @@ const AddNewVisitor = ({ open, onClose, fetchData, onActionClick }) => {
         );
       case 3:
         return (
-          <div className="flex flex-row space-x-4 p-4">
+          <div className="flex flex-col items-center space-y-4 p-4">
             <div className="space-y-4 flex flex-col items-center">
               <label htmlFor="image" className="text-sm font-semibold text-gray-700">Image</label>
               <div className="border-2 border-gray-300 rounded-lg p-3 flex items-center justify-center relative" style={{ width: '200px', height: '200px' }}>
@@ -272,20 +263,7 @@ const AddNewVisitor = ({ open, onClose, fetchData, onActionClick }) => {
               </button>
               <CameraModal open={imageModalOpen} onClose={() => setImageModalOpen(false)} onCaptured={handleImageCapture} />
             </div>
-
-            <div className="space-y-4 flex flex-col items-center">
-              <label htmlFor="signature" className="text-sm font-semibold text-gray-700">Signature</label>
-              <div className="border-2 border-gray-300 rounded-lg p-3 flex items-center justify-center relative" style={{ width: '200px', height: '200px' }}>
-                {signatureData ? (
-                  <img src={`data:image/jpeg;base64,${signatureData}`} alt="Captured Signature" className="max-h-full max-w-full rounded" />
-                ) : (
-                  <span className="text-gray-500">No signature captured</span>
-                )}
-              </div>
-              <SignatureCapture onCapture={handleSignatureCapture} />
-            </div>
           </div>
-
         );
       default:
         return 'Unknown step';

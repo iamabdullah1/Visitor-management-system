@@ -63,51 +63,135 @@ const Login = () => {
   }
 
   return (
-    <div className="flex items-center justify-center h-screen bg-customGreen w-full">
-      {/* <form className="p-8 min-w-[440px] border border-gray-300 rounded-lg shadow-md" onSubmit={handleSubmit} > */}
-      <form className="p-8 min-w-[440px] rounded-lg" style={{ 'border': "1px solid #567763", "boxShadow": "rgba(0, 0, 0, 0.24) 0px 3px 8px" }} onSubmit={handleSubmit} >
-       
-        <div className="flex justify-center mb-1 text-white text-lg md:text-xl">
-          {/* Ministry Of Defence, India */}
-          Visitor Management System
-        </div>
-        
-        <div className="mb-4">
-          <label htmlFor="username" className="sr-only">Username</label>
-          <input
-            type="text"
-            id="username"
-            className="w-full p-2 rounded-lg bg-customFieldGreen text-white"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
-        <div className="mb-6 relative">
-          <label htmlFor="password" className="sr-only">Password</label>
-          <input
-            type={showPassword ? "text" : "password"}
-            id="password"
-            className="w-full p-2 rounded-lg bg-customFieldGreen text-white pr-10"
-            value={password}
-            placeholder="Password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button
-            type="button"
-            onClick={handleTogglePasswordVisibility}
-            className="absolute inset-y-0 right-0 pr-3 flex text-white items-center text-sm leading-5"
-          >
-            {showPassword ? <VisibilityOff /> : <Visibility />}
-          </button>
-        </div>
+    <div className="min-h-screen bg-customGreen w-full px-4 py-8 flex flex-col">
+      {/* Main Content Container */}
+      <div className="flex-1 flex items-center justify-center w-full">
+        {/* Two Column Layout */}
+        <div className="flex flex-col lg:flex-row items-start justify-center w-full max-w-6xl gap-8">
+          {/* Left Side - Login Form */}
+          <div className="flex flex-col items-center w-full lg:w-1/2">
+            <form className="p-8 w-full max-w-md rounded-lg" style={{ 'border': "1px solid #567763", "boxShadow": "rgba(0, 0, 0, 0.24) 0px 3px 8px" }} onSubmit={handleSubmit} >
+              <div className="flex justify-center mb-1 text-white text-lg md:text-xl">
+                {/* Ministry Of Defence, India */}
+                Visitor Management System
+              </div>
+              <div className="mb-4">
+                <label htmlFor="username" className="sr-only">Username</label>
+                <input
+                  type="text"
+                  id="username"
+                  className="w-full p-2 rounded-lg bg-customFieldGreen text-white"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </div>
+              <div className="mb-6 relative">
+                <label htmlFor="password" className="sr-only">Password</label>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  className="w-full p-2 rounded-lg bg-customFieldGreen text-white pr-10"
+                  value={password}
+                  placeholder="Password"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={handleTogglePasswordVisibility}
+                  className="absolute inset-y-0 right-0 pr-3 flex text-white items-center text-sm leading-5"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </button>
+              </div>
+              <button type="submit" className="w-full text-white p-2 rounded-lg" style={{ backgroundColor: "rgb(15 70 37)" }}>
+                Login
+              </button>
+            </form>
+          </div>
 
-        {/* <button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 text-white p-2 rounded-lg"> */}
-        <button type="submit" className="w-full text-white p-2 rounded-lg" style={{ backgroundColor: "rgb(15 70 37)" }}>
-          Login
-        </button>
-      </form>
-      <div className="absolute bottom-0 left-0 right-0">
+          {/* Right Side - Credentials Display Section */}
+          <div className="w-full lg:w-1/2 flex justify-center lg:justify-start">
+            <div className="max-w-md w-full">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                <h3 className="text-white text-lg font-semibold mb-3 text-center">
+                  🔐 Available Login Credentials
+                </h3>
+                {/* Admin Section */}
+                <div className="mb-4">
+                  <h4 className="text-white font-medium mb-2 flex items-center">
+                    👑 Admin Users (Full Access)
+                  </h4>
+                  <div className="space-y-1">
+                    <div className="bg-white/20 rounded p-2 text-sm">
+                      <span className="text-white font-mono">admin</span>
+                      <span className="text-gray-200 ml-2">• Full system access</span>
+                    </div>
+                    <div className="bg-white/20 rounded p-2 text-sm">
+                      <span className="text-white font-mono">shah</span>
+                      <span className="text-gray-200 ml-2">• Full system access</span>
+                    </div>
+                    <div className="bg-white/20 rounded p-2 text-sm">
+                      <span className="text-white font-mono">sanjeev</span>
+                      <span className="text-gray-200 ml-2">• Full system access</span>
+                    </div>
+                  </div>
+                </div>
+                {/* Receptionist Section */}
+                <div className="mb-4">
+                  <h4 className="text-white font-medium mb-2 flex items-center">
+                    👥 Receptionist Users (Limited Access)
+                  </h4>
+                  <div className="space-y-1">
+                    <div className="bg-white/20 rounded p-2 text-sm">
+                      <span className="text-white font-mono">john</span>
+                      <span className="text-gray-200 ml-2">• Visitor management</span>
+                    </div>
+                    <div className="bg-white/20 rounded p-2 text-sm">
+                      <span className="text-white font-mono">jane, mike, sarah</span>
+                      <span className="text-gray-200 ml-2">• Visitor management</span>
+                    </div>
+                    <div className="bg-white/20 rounded p-2 text-sm">
+                      <span className="text-white font-mono">david, lisa, robert</span>
+                      <span className="text-gray-200 ml-2">• Visitor management</span>
+                    </div>
+                  </div>
+                </div>
+                {/* Security Guard Section */}
+                <div className="mb-4">
+                  <h4 className="text-white font-medium mb-2 flex items-center">
+                    🔒 Security Guards (Minimal Interface)
+                  </h4>
+                  <div className="space-y-1">
+                    <div className="bg-white/20 rounded p-2 text-sm">
+                      <span className="text-white font-mono">security1</span>
+                      <span className="text-gray-200 ml-2">• Access control</span>
+                    </div>
+                    <div className="bg-white/20 rounded p-2 text-sm">
+                      <span className="text-white font-mono">security2</span>
+                      <span className="text-gray-200 ml-2">• Access control</span>
+                    </div>
+                  </div>
+                </div>
+                {/* Password Info */}
+                <div className="mt-4 pt-3 border-t border-white/20">
+                  <div className="text-center">
+                    <p className="text-white/80 text-sm">
+                      🔑 <strong>Password:</strong> Any password works
+                    </p>
+                    <p className="text-white/60 text-xs mt-1">
+                      Use any username above with any password to login
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer Wave */}
+      <div className="mt-8 flex-shrink-0">
         <img src={footerwave} alt="Wave" className="w-full" />
       </div>
     </div>
