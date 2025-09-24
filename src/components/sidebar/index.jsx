@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import modlogo from '../../assets/images/mod-logo.png';
 import becillogo from '../../assets/images/becil.png';
-import vmslogo from "../../assets/images/vms-logo.png";
+
 import ForumIcon from '@mui/icons-material/Forum';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import ReceiptIcon from '@mui/icons-material/Receipt';
@@ -65,7 +65,7 @@ const SideBar = () => {
       <div className="overflow-y-auto py-2 px-3 rounded">
         <div className="flex justify-between items-center mb-6 h-14">
           {/* <img src={modlogo} alt="MOD Logo" className={`h-16 pl-2 transition-opacity duration-300 ${isCollapsed ? 'hidden' : 'block'}`} /> */}
-          <img src={vmslogo} alt="VMS Logo" className={`h-16 pl-1 transition-opacity duration-300 ${isCollapsed ? 'hidden' : 'block'}`} />
+         
           <MenuIcon className="text-white cursor-pointer h-14" style={{ fontSize: '2rem' }} onClick={toggleSidebar} />
         </div>
         <nav>
